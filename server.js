@@ -10,5 +10,10 @@ app.get("/pet", function (req, res) {
 });
 
 app.get("/beauty", function (req, res) {
-  res.send("뷰티용품 사세요");
+  res.send("뷰티용품 사세요!");
+});
+
+// html 보내기
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/index.html");
 });
