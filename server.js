@@ -7,9 +7,16 @@ const app = express();
 // 이 코드가 있어야 req.body가능
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(8080, function () {
-  console.log("listening on 8080");
-});
+// MongoDB
+const MongoClient = require("mongodb").MongoClient;
+MongoClient.connect(
+  "mongodb+srv://admin:tlqkfdk2@@cluster0.n6phqup.mongodb.net/?retryWrites=true&w=majority",
+  (에러, client) => {
+    app.listen(8080, function () {
+      console.log("listening on 8080");
+    });
+  }
+);
 
 app.get("/pet", function (req, res) {
   res.send("펫용품 쇼핑 사이트입니다.");
