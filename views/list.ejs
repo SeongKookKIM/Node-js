@@ -82,11 +82,19 @@
 
       $(".delete").click(function (e) {
         let 글번호 = e.target.dataset.id;
+        let 누른거 = $(this);
         $.ajax({
           method: "DELETE",
           url: "/delete",
           data: { _id: 글번호 },
-        }).done((res) => {});
+        })
+          .done((res) => {
+            console.log("삭제 성공!");
+            누른거.parent("li").fadeOut();
+          })
+          .fail((xhr, textStatus, errorThrown) => {
+            console.log(xhr, textStatus, errorThrown);
+          });
       });
     </script>
 
