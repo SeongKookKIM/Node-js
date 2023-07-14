@@ -95,3 +95,12 @@ app.get("/list", (요청, 응답) => {
       응답.render("list.ejs", { posts: 결과 });
     });
 });
+
+// 삭제요청
+app.delete("/delete", (요청, 응답) => {
+  console.log(요청.body);
+  요청.body._id = parseInt(요청.body._id);
+  db.collection("post").deleteOne(요청.body, function (에러, 결과) {
+    console.log("삭제완료");
+  });
+});
