@@ -65,5 +65,10 @@ app.post("/add", (req, res) => {
 
 // DB데이터 html로 보내기
 app.get("/list", (요청, 응답) => {
-  응답.render("list.ejs");
+  db.collection("post")
+    .find()
+    .toArray((에러, 결과) => {
+      console.log(결과);
+      응답.render("list.ejs", { posts: 결과 });
+    });
 });

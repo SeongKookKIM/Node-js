@@ -49,10 +49,18 @@
       </div>
     </nav>
 
-    <!-- 서버에서 가져온 리스트(EJS) -->
+    <!-- 서버에서 가져온 리스트(EJS)-반복문 -->
 
-    <h4>할일 제목: <%= %></h4>
-    <p>할일 마감 날짜:</p>
+    <% for (var i = 0; i < posts.length; i ++) { %>
+    <h4>할일 제목: <%= posts[i].title %></h4>
+    <p>할일 마감 날짜: <%= posts[i].date %></p>
+    <% } %>
+
+    <!-- <h4>할일 제목: <%= posts[0].title %></h4>
+    <p>할일 마감 날짜: <%= posts[0].date %></p>
+
+    <h4>할일 제목: <%= posts[1].title %></h4>
+    <p>할일 마감 날짜: <%= posts[1].date %></p> -->
 
     <script
       src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
