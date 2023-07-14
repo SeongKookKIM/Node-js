@@ -69,6 +69,16 @@ app.post("/add", (req, res) => {
         { _id: totalpost + 1, 제목: req.body.title, 날짜: req.body.date },
         (err, result) => {
           console.log("저장완료");
+
+          // Counter totalPost 1증가(updateOner으로 바꿀거 찾은 후 set으로 변경)
+          db.collection("counter").updateOne(
+            { name: "게시물갯수" },
+            { $inc: { totalPost: 1 } },
+            function (에러, 결과) {
+              if (에러) return console.log(에러);
+              console.log("totalPost 증가");
+            }
+          );
         }
       );
     }
@@ -80,6 +90,7 @@ app.get("/list", (요청, 응답) => {
   db.collection("post")
     .find()
     .toArray((에러, 결과) => {
+      if (에러) return console.log(에러);
       console.log(결과);
       응답.render("list.ejs", { posts: 결과 });
     });
