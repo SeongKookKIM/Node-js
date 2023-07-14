@@ -58,9 +58,21 @@ app.get("/write", (req, res) => {
 // });
 app.post("/add", (req, res) => {
   res.send("전송완료");
-  db.collection("post").insertOne(req.body, (err, result) => {
-    console.log("저장완료");
-  });
+
+  db.collection("counter").findOne(
+    { name: "게시물갯수" },
+    function (에러, 결과) {
+      console.log(결과.totalPost);
+      var totalpost = 결과.totalPost;
+
+      db.collection("post").insertOne(
+        { _id: totalpost + 1, 제목: req.body.title, 날짜: req.body.date },
+        (err, result) => {
+          console.log("저장완료");
+        }
+      );
+    }
+  );
 });
 
 // DB데이터 html로 보내기
