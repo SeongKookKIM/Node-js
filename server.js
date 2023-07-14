@@ -7,6 +7,9 @@ const app = express();
 // 이 코드가 있어야 req.body가능
 app.use(express.urlencoded({ extended: true }));
 
+// EJS
+app.set("view engine", "ejs");
+
 // MongoDB
 var db;
 const MongoClient = require("mongodb").MongoClient;
@@ -24,12 +27,6 @@ MongoClient.connect(
     //     console.log("저장완료");
     //   }
     // );
-    app.post("/add", (req, res) => {
-      res.send("전송완료");
-      db.collection("post").insertOne(req.body, (err, result) => {
-        console.log("저장완료");
-      });
-    });
   }
 );
 
@@ -59,3 +56,14 @@ app.get("/write", (req, res) => {
 //   res.send("전송완료");
 //   console.log(req.body);
 // });
+app.post("/add", (req, res) => {
+  res.send("전송완료");
+  db.collection("post").insertOne(req.body, (err, result) => {
+    console.log("저장완료");
+  });
+});
+
+// DB데이터 html로 보내기
+app.get("/list", (요청, 응답) => {
+  응답.render("list.ejs");
+});
