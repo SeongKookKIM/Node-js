@@ -165,6 +165,21 @@ app.use(passport.session());
 app.get("/login", function (요청, 응답) {
   응답.render("login.ejs");
 });
+
+// 로그인시에만 마이페이지가 보이게
+app.get("/mypage", 로그인했니, function (요청, 응답) {
+  // 요청.user(user의 db 정보)
+  // console.log(요청.user);
+  응답.render("mypage.ejs", { 사용자: 요청.user });
+});
+function 로그인했니(요청, 응답, next) {
+  if (요청.user) {
+    next(); //통과
+  } else {
+    응답.send("로그인을 안하셨습니다.");
+  }
+}
+
 // passport를 사용하여 아이디 비번 검사
 app.post(
   "/login",
@@ -209,6 +224,9 @@ passport.use(
 passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
-passport.serializeUser(function (아이디, done) {
-  done(null, {});
+
+passport.deserializeUser(function (아이디, done) {
+  db.collection("login").findOne({ id: 아이디 }, function (에러, 결과) {
+    done(null, 결과);
+  });
 });
