@@ -10,6 +10,9 @@ app.use(express.urlencoded({ extended: true }));
 // EJS
 app.set("view engine", "ejs");
 
+// CSS추가
+app.use("/public", express.static("public"));
+
 // MongoDB
 var db;
 const MongoClient = require("mongodb").MongoClient;
@@ -44,11 +47,11 @@ app.get("/beauty", function (req, res) {
 
 // html 보내기(GET)
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.render("index.ejs");
 });
 
 app.get("/write", (req, res) => {
-  res.sendFile(__dirname + "/write.html");
+  res.render("write.ejs");
 });
 
 // POST
@@ -57,7 +60,7 @@ app.get("/write", (req, res) => {
 //   console.log(req.body);
 // });
 app.post("/add", (req, res) => {
-  res.send("전송완료");
+  // res.send("전송완료");
 
   db.collection("counter").findOne(
     { name: "게시물갯수" },
@@ -77,6 +80,7 @@ app.post("/add", (req, res) => {
             function (에러, 결과) {
               if (에러) return console.log(에러);
               console.log("totalPost 증가");
+              res.redirect("/list");
             }
           );
         }
