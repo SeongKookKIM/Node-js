@@ -13,6 +13,10 @@ app.set("view engine", "ejs");
 // CSS추가
 app.use("/public", express.static("public"));
 
+// 라이브러리 MEHTOD-OVERRIDE 설치 셋팅(form에서도 PUT,DELETE사용가능하게함)
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
+
 // MongoDB
 var db;
 const MongoClient = require("mongodb").MongoClient;
@@ -117,6 +121,16 @@ app.get("/detail/:id", function (요청, 응답) {
     function (에러, 결과) {
       console.log(결과);
       응답.render("detail.ejs", { data: 결과 });
+    }
+  );
+});
+
+// 수정하기
+app.get("/edit/:id", function (요청, 응답) {
+  db.collection("post").findOne(
+    { _id: parseInt(요청.params.id) },
+    function (에러, 결과) {
+      응답.render("edit.ejs", { post: 결과 });
     }
   );
 });
