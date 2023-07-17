@@ -4,7 +4,7 @@ const app = express();
 // const bodyParser = require("body-parser");
 // app.use(bodyParser.urlencoded({ extended: true }));
 
-// 이 코드가 있어야 req.body가능
+// 이 코드가 있어야 req.body가능(요청.body)
 app.use(express.urlencoded({ extended: true }));
 
 // EJS
@@ -22,6 +22,10 @@ require("dotenv").config();
 
 // bcrypt(비밀번호 암호화)
 const bcrypt = require("bcrypt");
+// helmet으로 보안 강화
+const helmet = require("helmet");
+
+app.use(helmet());
 
 // MongoDB
 var db;
