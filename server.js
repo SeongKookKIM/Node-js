@@ -20,6 +20,9 @@ app.use(methodOverride("_method"));
 //ENV 파일
 require("dotenv").config();
 
+// bcrypt(비밀번호 암호화)
+const bcrypt = require("bcrypt");
+
 // MongoDB
 var db;
 const MongoClient = require("mongodb").MongoClient;
@@ -207,9 +210,11 @@ passport.use(
         function (에러, 결과) {
           if (에러) return done(에러);
 
+          const result = bcrypt.compareSync(입력한비번, 결과.pw);
+
           if (!결과)
             return done(null, false, { message: "존재하지않는 아이디요" });
-          if (입력한비번 == 결과.pw) {
+          if (result) {
             return done(null, 결과);
           } else {
             return done(null, false, { message: "비번틀렸어요" });
@@ -236,7 +241,9 @@ app.get("/sign", (요청, 응답) => {
   응답.render("sign.ejs");
 });
 app.post("/sign", (요청, 응답) => {
-  db.collection("login").insertOne(요청.body, (에러, 결과) => {
+  const hashed = bcrypt.hashSync(요청.body.pw, 10);
+  let signUp = { id: 요청.body.id, pw: hashed };
+  db.collection("login").insertOne(signUp, (에러, 결과) => {
     if (에러) return console.log(에러);
     응답.redirect("/login");
   });
