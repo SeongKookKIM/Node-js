@@ -44,7 +44,7 @@ MongoClient.connect(process.env.MONGO, (에러, client) => {
   // );
 });
 
-app.listen(8080, function () {
+app.listen(process.env.PORT, function () {
   console.log("listening on 8080");
 });
 
