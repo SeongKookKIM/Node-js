@@ -230,3 +230,14 @@ passport.deserializeUser(function (아이디, done) {
     done(null, 결과);
   });
 });
+
+// 회원가입
+app.get("/sign", (요청, 응답) => {
+  응답.render("sign.ejs");
+});
+app.post("/sign", (요청, 응답) => {
+  db.collection("login").insertOne(요청.body, (에러, 결과) => {
+    if (에러) return console.log(에러);
+    응답.redirect("/login");
+  });
+});
