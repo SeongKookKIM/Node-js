@@ -105,3 +105,14 @@ app.delete("/delete", (요청, 응답) => {
     응답.status(200).send({ message: "성공했습니다" });
   });
 });
+
+// Detail(params사용)
+app.get("/detail/:id", function (요청, 응답) {
+  db.collection("post").findOne(
+    { _id: parseInt(요청.params.id) },
+    function (에러, 결과) {
+      console.log(결과);
+      응답.render("detail.ejs", { data: 결과 });
+    }
+  );
+});
