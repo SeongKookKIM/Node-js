@@ -23,9 +23,9 @@ require("dotenv").config();
 // bcrypt(비밀번호 암호화)
 const bcrypt = require("bcrypt");
 // helmet으로 보안 강화
-const helmet = require("helmet");
+// const helmet = require("helmet");
 
-app.use(helmet());
+// app.use(helmet());
 
 // MongoDB
 var db;
@@ -108,6 +108,16 @@ app.get("/list", (요청, 응답) => {
       if (에러) return console.log(에러);
       console.log(결과);
       응답.render("list.ejs", { posts: 결과 });
+    });
+});
+
+// List에서 Search(Query String문법)
+app.get("/search", (요청, 응답) => {
+  console.log(요청.query.value);
+  db.collection("post")
+    .find({ 제목: 요청.query.value })
+    .toArray((에러, 결과) => {
+      console.log(결과);
     });
 });
 
