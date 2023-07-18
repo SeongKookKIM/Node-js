@@ -178,17 +178,18 @@ app.get("/sign", (요청, 응답) => {
   응답.render("sign.ejs");
 });
 app.post("/sign", (요청, 응답) => {
-  let findId = db.collection("login").findOne({ id: 요청.body.id });
-  if (!findId) {
-    const hashed = bcrypt.hashSync(요청.body.pw, 10);
-    let signUp = { id: 요청.body.id, pw: hashed };
-    db.collection("login").insertOne(signUp, (에러, 결과) => {
-      if (에러) return console.log(에러);
-      응답.redirect("/login");
-    });
-  } else {
-    응답.status(403).send("이미 존재하는 아이디입니다.");
-  }
+  db.collection("login").findOne({ id: 요청.body.id }, function (에러, 결과) {
+    if (결과.id == 요청.body.id) {
+      응답.status(403).send("이미 존재하는 아이디입니다.");
+    } else {
+      const hashed = bcrypt.hashSync(요청.body.pw, 10);
+      let signUp = { id: 요청.body.id, pw: hashed };
+      db.collection("login").insertOne(signUp, (에러, 결과) => {
+        if (에러) return console.log(에러);
+        응답.status(200).redirect("/login");
+      });
+    }
+  });
 });
 
 // Write
