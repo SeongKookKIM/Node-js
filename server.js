@@ -67,16 +67,6 @@ app.get("/write", (req, res) => {
 //   console.log(req.body);
 // });
 
-// DB데이터 html로 보내기
-app.get("/list", (요청, 응답) => {
-  db.collection("post")
-    .find()
-    .toArray((에러, 결과) => {
-      if (에러) return console.log(에러);
-      응답.render("list.ejs", { posts: 결과 });
-    });
-});
-
 // List에서 Search(Query String문법)
 // { $text: { $search: 요청.query.value } } - text 인덱싱 후 검색 기능(띄어쓰기 기준)
 app.get("/search", (요청, 응답) => {
@@ -118,18 +108,6 @@ app.get("/edit/:id", function (요청, 응답) {
     { _id: parseInt(요청.params.id) },
     function (에러, 결과) {
       응답.render("edit.ejs", { post: 결과 });
-    }
-  );
-});
-
-app.put("/edit", (요청, 응답) => {
-  db.collection("post").updateOne(
-    { _id: parseInt(요청.body.id) },
-    { $set: { 제목: 요청.body.title, 날짜: 요청.body.date } },
-    (에러, 결과) => {
-      if (에러) return console.log(에러);
-      console.log("수정완료");
-      응답.redirect("/list");
     }
   );
 });
@@ -267,6 +245,17 @@ app.post("/add", (req, res) => {
   );
 });
 
+// DB데이터 html로 보내기
+app.get("/list", (요청, 응답) => {
+  db.collection("post")
+    .find()
+    .toArray((에러, 결과) => {
+      if (에러) return console.log(에러);
+
+      응답.render("list.ejs", { posts: 결과, user: 요청.user });
+    });
+});
+
 // 삭제요청
 app.delete("/delete", (요청, 응답) => {
   요청.body._id = parseInt(요청.body._id);
@@ -280,4 +269,23 @@ app.delete("/delete", (요청, 응답) => {
       응답.status(400).send({ message: "삭제 권한이 없습니다." });
     }
   });
+});
+
+// 수정요청
+app.put("/edit", (요청, 응답) => {
+  console.log(요청.body);
+  if (요청.body.name == 요청.user._id) {
+    db.collection("post").updateOne(
+      { _id: parseInt(요청.body.id) },
+      { $set: { 제목: 요청.body.title, 날짜: 요청.body.date } },
+      (에러, 결과) => {
+        if (에러) return console.log(에러);
+
+        console.log("수정완료");
+        응답.status(200).redirect("/list");
+      }
+    );
+  } else {
+    응답.status(403).send("수정권한이 없습니다.");
+  }
 });

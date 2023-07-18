@@ -62,6 +62,7 @@
             >
           </h4>
           <p>할일 마감 날짜: <%= posts[i].날짜 %></p>
+          <% if(String(user._id) === String(posts[i].작성자)) {%>
           <button
             type="button"
             class="btn btn-success delete"
@@ -69,6 +70,7 @@
           >
             삭제
           </button>
+          <% } %>
         </li>
         <% } %>
       </ul>
@@ -100,11 +102,5 @@
       integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
       crossorigin="anonymous"
     ></script>
-
-    <!-- <h4>할일 제목: <%= posts[0].title %></h4>
-    <p>할일 마감 날짜: <%= posts[0].date %></p>
-
-    <h4>할일 제목: <%= posts[1].title %></h4>
-    <p>할일 마감 날짜: <%= posts[1].date %></p> -->
   </body>
 </html>
