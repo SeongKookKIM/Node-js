@@ -112,10 +112,24 @@ app.get("/list", (요청, 응답) => {
 });
 
 // List에서 Search(Query String문법)
+// { $text: { $search: 요청.query.value } } - text 인덱싱 후 검색 기능(띄어쓰기 기준)
 app.get("/search", (요청, 응답) => {
-  console.log(요청.query.value);
+  let 검색조건 = [
+    {
+      $search: {
+        index: "titleSearch",
+        text: {
+          query: 요청.query.value,
+          path: "제목", // 제목 날짜 둘 다 찾고싶으면 ['제목','날짜']
+        },
+      },
+    },
+    // { $sort: { _id: 1 } }, //정렬
+    // { $limit: 10 },
+    // { $project: { 제목: 1, _id: 0 }, score: { $meta: "searchScore" } }, // 검색결괴에서 필터주기(1은 가져오기, 0 은 뺴기)
+  ];
   db.collection("post")
-    .find({ 제목: 요청.query.value })
+    .aggregate(검색조건)
     .toArray((에러, 결과) => {
       if (에러) return console.log(에러);
       응답.render("search.ejs", { search: 결과 });
