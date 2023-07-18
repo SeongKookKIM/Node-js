@@ -22,10 +22,6 @@ require("dotenv").config();
 
 // bcrypt(비밀번호 암호화)
 const bcrypt = require("bcrypt");
-// helmet으로 보안 강화
-// const helmet = require("helmet");
-
-// app.use(helmet());
 
 // MongoDB
 var db;
@@ -70,35 +66,6 @@ app.get("/write", (req, res) => {
 //   res.send("전송완료");
 //   console.log(req.body);
 // });
-app.post("/add", (req, res) => {
-  // res.send("전송완료");
-
-  db.collection("counter").findOne(
-    { name: "게시물갯수" },
-    function (에러, 결과) {
-      console.log(결과.totalPost);
-      var totalpost = 결과.totalPost;
-
-      db.collection("post").insertOne(
-        { _id: totalpost + 1, 제목: req.body.title, 날짜: req.body.date },
-        (err, result) => {
-          console.log("저장완료");
-
-          // Counter totalPost 1증가(updateOner으로 바꿀거 찾은 후 set으로 변경)
-          db.collection("counter").updateOne(
-            { name: "게시물갯수" },
-            { $inc: { totalPost: 1 } },
-            function (에러, 결과) {
-              if (에러) return console.log(에러);
-              console.log("totalPost 증가");
-              res.redirect("/list");
-            }
-          );
-        }
-      );
-    }
-  );
-});
 
 // DB데이터 html로 보내기
 app.get("/list", (요청, 응답) => {
@@ -106,7 +73,6 @@ app.get("/list", (요청, 응답) => {
     .find()
     .toArray((에러, 결과) => {
       if (에러) return console.log(에러);
-      console.log(결과);
       응답.render("list.ejs", { posts: 결과 });
     });
 });
@@ -136,22 +102,11 @@ app.get("/search", (요청, 응답) => {
     });
 });
 
-// 삭제요청
-app.delete("/delete", (요청, 응답) => {
-  console.log(요청.body);
-  요청.body._id = parseInt(요청.body._id);
-  db.collection("post").deleteOne(요청.body, function (에러, 결과) {
-    console.log("삭제완료");
-    응답.status(200).send({ message: "성공했습니다" });
-  });
-});
-
 // Detail(params사용)
 app.get("/detail/:id", function (요청, 응답) {
   db.collection("post").findOne(
     { _id: parseInt(요청.params.id) },
     function (에러, 결과) {
-      console.log(결과);
       응답.render("detail.ejs", { data: 결과 });
     }
   );
@@ -275,5 +230,54 @@ app.post("/sign", (요청, 응답) => {
   db.collection("login").insertOne(signUp, (에러, 결과) => {
     if (에러) return console.log(에러);
     응답.redirect("/login");
+  });
+});
+
+// Write
+app.post("/add", (req, res) => {
+  // res.send("전송완료");
+
+  db.collection("counter").findOne(
+    { name: "게시물갯수" },
+    function (에러, 결과) {
+      var totalpost = 결과.totalPost;
+
+      let 저장할거 = {
+        _id: totalpost + 1,
+        제목: req.body.title,
+        날짜: req.body.date,
+        작성자: req.user._id,
+      };
+
+      db.collection("post").insertOne(저장할거, (err, result) => {
+        console.log("저장완료");
+
+        // Counter totalPost 1증가(updateOner으로 바꿀거 찾은 후 set으로 변경)
+        db.collection("counter").updateOne(
+          { name: "게시물갯수" },
+          { $inc: { totalPost: 1 } },
+          function (에러, 결과) {
+            if (에러) return console.log(에러);
+            console.log("totalPost 증가");
+            res.redirect("/list");
+          }
+        );
+      });
+    }
+  );
+});
+
+// 삭제요청
+app.delete("/delete", (요청, 응답) => {
+  요청.body._id = parseInt(요청.body._id);
+
+  let 삭제할데이터 = { _id: 요청.body._id, 작성자: 요청.user._id };
+  db.collection("post").deleteOne(삭제할데이터, function (에러, 결과) {
+    // console.log(결과.deletedCount);
+    if (결과.deletedCount == 1) {
+      응답.status(200).send({ message: "성공했습니다" });
+    } else {
+      응답.status(400).send({ message: "삭제 권한이 없습니다." });
+    }
   });
 });

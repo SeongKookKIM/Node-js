@@ -85,11 +85,12 @@
           data: { _id: 글번호 },
         })
           .done((res) => {
-            console.log("삭제 성공!");
+            console.log(res);
             누른거.parent("li").fadeOut();
           })
           .fail((xhr, textStatus, errorThrown) => {
-            console.log(xhr, textStatus, errorThrown);
+            console.log(errorThrown);
+            window.alert("삭제 권한이 없습니다.");
           });
       });
     </script>
