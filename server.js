@@ -215,45 +215,59 @@ app.post("/sign", (요청, 응답) => {
 app.post("/add", (req, res) => {
   // res.send("전송완료");
 
-  db.collection("counter").findOne(
-    { name: "게시물갯수" },
-    function (에러, 결과) {
-      var totalpost = 결과.totalPost;
+  if (req.user) {
+    if (req.body.title == "") {
+      res.status(403).send("제목을 입력해주세요");
+    } else if (req.body.date == "") {
+      res.status(403).send("날짜를 입력해주세요");
+    } else {
+      db.collection("counter").findOne(
+        { name: "게시물갯수" },
+        function (에러, 결과) {
+          var totalpost = 결과.totalPost;
 
-      let 저장할거 = {
-        _id: totalpost + 1,
-        제목: req.body.title,
-        날짜: req.body.date,
-        작성자: req.user._id,
-      };
+          let 저장할거 = {
+            _id: totalpost + 1,
+            제목: req.body.title,
+            날짜: req.body.date,
+            작성자: req.user._id,
+          };
 
-      db.collection("post").insertOne(저장할거, (err, result) => {
-        console.log("저장완료");
+          db.collection("post").insertOne(저장할거, (err, result) => {
+            console.log("저장완료");
 
-        // Counter totalPost 1증가(updateOner으로 바꿀거 찾은 후 set으로 변경)
-        db.collection("counter").updateOne(
-          { name: "게시물갯수" },
-          { $inc: { totalPost: 1 } },
-          function (에러, 결과) {
-            if (에러) return console.log(에러);
-            console.log("totalPost 증가");
-            res.redirect("/list");
-          }
-        );
-      });
+            // Counter totalPost 1증가(updateOner으로 바꿀거 찾은 후 set으로 변경)
+            db.collection("counter").updateOne(
+              { name: "게시물갯수" },
+              { $inc: { totalPost: 1 } },
+              function (에러, 결과) {
+                if (에러) return console.log(에러);
+                console.log("totalPost 증가");
+                res.redirect("/list");
+              }
+            );
+          });
+        }
+      );
     }
-  );
+  } else {
+    res.status(403).send("로그인 후 글작성이 가능하십니다.");
+  }
 });
 
 // DB데이터 html로 보내기
 app.get("/list", (요청, 응답) => {
-  db.collection("post")
-    .find()
-    .toArray((에러, 결과) => {
-      if (에러) return console.log(에러);
+  if (요청.user) {
+    db.collection("post")
+      .find()
+      .toArray((에러, 결과) => {
+        if (에러) return console.log(에러);
 
-      응답.render("list.ejs", { posts: 결과, user: 요청.user });
-    });
+        응답.render("list.ejs", { posts: 결과, user: 요청.user });
+      });
+  } else {
+    응답.status(403).send("로그인 후 이용해주세요");
+  }
 });
 
 // 삭제요청
