@@ -117,7 +117,8 @@ app.get("/search", (요청, 응답) => {
   db.collection("post")
     .find({ 제목: 요청.query.value })
     .toArray((에러, 결과) => {
-      console.log(결과);
+      if (에러) return console.log(에러);
+      응답.render("search.ejs", { search: 결과 });
     });
 });
 
