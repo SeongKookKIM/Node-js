@@ -67,31 +67,6 @@ app.get("/write", (req, res) => {
 //   console.log(req.body);
 // });
 
-// List에서 Search(Query String문법)
-// { $text: { $search: 요청.query.value } } - text 인덱싱 후 검색 기능(띄어쓰기 기준)
-app.get("/search", (요청, 응답) => {
-  let 검색조건 = [
-    {
-      $search: {
-        index: "titleSearch",
-        text: {
-          query: 요청.query.value,
-          path: "제목", // 제목 날짜 둘 다 찾고싶으면 ['제목','날짜']
-        },
-      },
-    },
-    // { $sort: { _id: 1 } }, //정렬
-    // { $limit: 10 },
-    // { $project: { 제목: 1, _id: 0 }, score: { $meta: "searchScore" } }, // 검색결괴에서 필터주기(1은 가져오기, 0 은 뺴기)
-  ];
-  db.collection("post")
-    .aggregate(검색조건)
-    .toArray((에러, 결과) => {
-      if (에러) return console.log(에러);
-      응답.render("search.ejs", { search: 결과 });
-    });
-});
-
 // Detail(params사용)
 app.get("/detail/:id", function (요청, 응답) {
   db.collection("post").findOne(
@@ -301,5 +276,34 @@ app.put("/edit", (요청, 응답) => {
     );
   } else {
     응답.status(403).send("수정권한이 없습니다.");
+  }
+});
+
+// List에서 Search(Query String문법)
+// { $text: { $search: 요청.query.value } } - text 인덱싱 후 검색 기능(띄어쓰기 기준)
+app.get("/search", (요청, 응답) => {
+  if (요청.user) {
+    let 검색조건 = [
+      {
+        $search: {
+          index: "titleSearch",
+          text: {
+            query: 요청.query.value,
+            path: "제목", // 제목 날짜 둘 다 찾고싶으면 ['제목','날짜']
+          },
+        },
+      },
+      // { $sort: { _id: 1 } }, //정렬
+      // { $limit: 10 },
+      // { $project: { 제목: 1, _id: 0 }, score: { $meta: "searchScore" } }, // 검색결괴에서 필터주기(1은 가져오기, 0 은 뺴기)
+    ];
+    db.collection("post")
+      .aggregate(검색조건)
+      .toArray((에러, 결과) => {
+        if (에러) return console.log(에러);
+        응답.render("search.ejs", { posts: 결과, user: 요청.user });
+      });
+  } else {
+    응답.status(403).send("로그인 후 사용해주세요");
   }
 });
