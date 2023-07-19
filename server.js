@@ -40,6 +40,9 @@ MongoClient.connect(process.env.MONGO, (에러, client) => {
   // );
 });
 
+// ObjectId로 변형시키는거
+const { ObjectId } = require("mongodb");
+
 app.listen(process.env.PORT, function () {
   console.log("listening on 8080");
 });
@@ -355,4 +358,32 @@ app.post("/upload", upload.single("profile"), function (요청, 응답) {
 
 app.get("/image/:imageName", (요청, 응답) => {
   응답.sendFile(__dirname + "/public/image/" + 요청.params.imageName);
+});
+
+// 채팅방
+
+app.post("/chatroom", 로그인했니, (요청, 응답) => {
+  let 저장할거 = {
+    title: "무슨무슨채팅방",
+    member: [ObjectId(요청.body.당한사람id), 요청.user._id],
+    date: new Date(),
+  };
+  db.collection("chatroom")
+    .insertOne(저장할거)
+    .then((res) => {
+      console.log(res);
+      응답.send("성공");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get("/chat", 로그인했니, (요청, 응답) => {
+  db.collection("chatroom")
+    .find({ member: 요청.user._id })
+    .toArray()
+    .then((res) => {
+      응답.render("chat.ejs", { data: res });
+    });
 });
