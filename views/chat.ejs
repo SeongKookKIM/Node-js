@@ -54,9 +54,23 @@
       $(".list-group-item").click(function () {
         누른채팅방id = this.dataset.id;
 
+        // 제이쿼리로 특정 html비우기
+        $(".chat-content").html("");
+
+        if (eventSource != undefined) {
+          eventSource.close();
+        }
+
         eventSource = new EventSource("/message" + 누른채팅방id);
         eventSource.addEventListener("test", function (e) {
           console.log(JSON.parse(e.data));
+
+          let 가져온거 = JSON.parse(e.data);
+          가져온거.forEach((a) => {
+            $(".chat-content").append(
+              `<li><span class="chat-box">${a.content}</span></li>`
+            );
+          });
         });
       });
 

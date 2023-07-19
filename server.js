@@ -420,4 +420,13 @@ app.get("/message:id", 로그인했니, (요청, 응답) => {
       응답.write("event: test\n");
       응답.write("data: " + JSON.stringify(res) + "\n\n");
     });
+
+  const pipeline = [{ $match: { "fullDocument.parent": 요청.params.id } }];
+  const collection = db.collection("message");
+  const changeStream = collection.watch(pipeline);
+  changeStream.on("change", (result) => {
+    console.log(result.fullDocument);
+    응답.write("event: test\n");
+    응답.write("data: " + JSON.stringify([result.fullDocument]) + "\n\n");
+  });
 });
