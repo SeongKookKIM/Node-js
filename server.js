@@ -270,7 +270,7 @@ app.delete("/delete", (요청, 응답) => {
 
 // 수정요청
 app.put("/edit", (요청, 응답) => {
-  console.log(요청.body);
+  // console.log(요청.body);
   if (요청.body.name == 요청.user._id) {
     db.collection("post").updateOne(
       { _id: parseInt(요청.body.id) },
@@ -315,3 +315,8 @@ app.get("/search", (요청, 응답) => {
     응답.status(403).send("로그인 후 사용해주세요");
   }
 });
+
+// Route폴더에 파일가져와서 사용하기(고객이 / 경롤로 요청했을 때 미들웨어적용)
+app.use("/shop", 로그인했니, require("./routes/shop"));
+
+app.use("/board/sub", 로그인했니, require("./routes/board"));
