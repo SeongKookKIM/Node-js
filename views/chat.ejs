@@ -33,11 +33,7 @@
 
         <div class="col-9 p-0">
           <div class="chat-room">
-            <ul class="list-group chat-content">
-              <li><span class="chat-box">채팅방1 내용</span></li>
-              <li><span class="chat-box">채팅방1 내용</span></li>
-              <li><span class="chat-box mine">채팅방1 내용</span></li>
-            </ul>
+            <ul class="list-group chat-content"></ul>
             <div class="input-group">
               <input class="form-control" id="chat-input" />
               <button class="btn btn-secondary" id="send">전송</button>
@@ -49,9 +45,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
+      console.log(`<%= user._id %>`);
       let 누른채팅방id;
       let eventSource;
       $(".list-group-item").click(function () {
+        $(".list-group-item").css({ backgroundColor: "white" });
+        $(this).css({ backgroundColor: "lightgrey" });
+
         누른채팅방id = this.dataset.id;
 
         // 제이쿼리로 특정 html비우기
@@ -67,9 +67,15 @@
 
           let 가져온거 = JSON.parse(e.data);
           가져온거.forEach((a) => {
-            $(".chat-content").append(
-              `<li><span class="chat-box">${a.content}</span></li>`
-            );
+            if (`<%= user._id %>` == e.data.userid) {
+              $(".chat-content").append(
+                `<li><span class="chat-box mine">${a.content}</span></li>`
+              );
+            } else {
+              $(".chat-content").append(
+                `<li><span class="chat-box">${a.content}</span></li>`
+              );
+            }
           });
         });
       });

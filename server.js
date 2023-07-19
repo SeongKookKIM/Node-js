@@ -383,7 +383,7 @@ app.get("/chat", 로그인했니, (요청, 응답) => {
     .find({ member: 요청.user._id })
     .toArray()
     .then((res) => {
-      응답.render("chat.ejs", { data: res });
+      응답.render("chat.ejs", { data: res, user: 요청.user });
     });
 });
 
