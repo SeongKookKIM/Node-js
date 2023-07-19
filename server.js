@@ -320,3 +320,39 @@ app.get("/search", (요청, 응답) => {
 app.use("/shop", 로그인했니, require("./routes/shop"));
 
 app.use("/board/sub", 로그인했니, require("./routes/board"));
+
+// 이미지업로드 %% 이미지 서버 만들기(multer 사용법)
+let multer = require("multer");
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/image");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+      return callback(new Error("PNG, JPG만 업로드하세요"));
+    }
+    callback(null, true);
+  },
+  // limits: {
+  //   fileSize: 1024 * 1024,
+  // },
+});
+
+let upload = multer({ storage: storage });
+
+app.get("/upload", (req, res) => {
+  res.render("upload.ejs");
+});
+
+// input name -(single한개의 파일),(array여러개의 파일,숫자==갯수)
+app.post("/upload", upload.single("profile"), function (요청, 응답) {
+  응답.send("이미지 완료");
+});
+
+app.get("/image/:imageName", (요청, 응답) => {
+  응답.sendFile(__dirname + "/public/image/" + 요청.params.imageName);
+});
