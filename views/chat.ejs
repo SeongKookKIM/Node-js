@@ -50,9 +50,14 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
       let 누른채팅방id;
-
+      let eventSource;
       $(".list-group-item").click(function () {
         누른채팅방id = this.dataset.id;
+
+        eventSource = new EventSource("/message" + 누른채팅방id);
+        eventSource.addEventListener("test", function (e) {
+          console.log(JSON.parse(e.data));
+        });
       });
 
       $("#send").click(function () {

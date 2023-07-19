@@ -405,3 +405,19 @@ app.post("/message", 로그인했니, (요청, 응답) => {
       console.log(err);
     });
 });
+
+app.get("/message:id", 로그인했니, (요청, 응답) => {
+  응답.writeHead(200, {
+    Connection: "keep-alive",
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+  });
+
+  db.collection("message")
+    .find({ parent: 요청.params.id })
+    .toArray()
+    .then((res) => {
+      응답.write("event: test\n");
+      응답.write("data: " + JSON.stringify(res) + "\n\n");
+    });
+});
