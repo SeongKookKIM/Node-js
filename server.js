@@ -371,7 +371,6 @@ app.post("/chatroom", 로그인했니, (요청, 응답) => {
   db.collection("chatroom")
     .insertOne(저장할거)
     .then((res) => {
-      console.log(res);
       응답.send("성공");
     })
     .catch((err) => {
@@ -385,5 +384,24 @@ app.get("/chat", 로그인했니, (요청, 응답) => {
     .toArray()
     .then((res) => {
       응답.render("chat.ejs", { data: res });
+    });
+});
+
+app.post("/message", 로그인했니, (요청, 응답) => {
+  let 저장할거 = {
+    parent: 요청.body.parent,
+    content: 요청.body.content,
+    userid: 요청.user._id,
+    date: new Date(),
+  };
+
+  db.collection("message")
+    .insertOne(저장할거)
+    .then((res) => {
+      console.log("db 저장성공");
+      응답.send("DB저장성공");
+    })
+    .catch((err) => {
+      console.log(err);
     });
 });
