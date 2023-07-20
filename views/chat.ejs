@@ -63,11 +63,11 @@
 
         eventSource = new EventSource("/message" + 누른채팅방id);
         eventSource.addEventListener("test", function (e) {
-          console.log(JSON.parse(e.data));
+          // console.log(JSON.parse(e.data));
 
           let 가져온거 = JSON.parse(e.data);
           가져온거.forEach((a) => {
-            if (`<%= user._id %>` == e.data.userid) {
+            if (`<%= user._id %>` == a.userid) {
               $(".chat-content").append(
                 `<li><span class="chat-box mine">${a.content}</span></li>`
               );
