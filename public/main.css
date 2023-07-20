@@ -3,6 +3,9 @@ h4 {
 }
 
 /* 채팅방 */
+.list-group-item {
+  cursor: pointer;
+}
 .chat-content {
   height: 450px;
   overflow-y: scroll;
