@@ -110,9 +110,14 @@
         console.log(id);
         $.post("/chatroom", {
           당한사람id: id,
-        }).then(() => {
-          console.log("성공");
-        });
+        })
+          .then((res) => {
+            console.log(res);
+            window.location.href = "/chat";
+          })
+          .catch((err) => {
+            window.alert("이미 존재하는 방입니다.");
+          });
       });
     </script>
 

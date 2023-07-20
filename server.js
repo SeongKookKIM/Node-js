@@ -363,18 +363,26 @@ app.get("/image/:imageName", (요청, 응답) => {
 // 채팅방
 
 app.post("/chatroom", 로그인했니, (요청, 응답) => {
-  let 저장할거 = {
-    title: "무슨무슨채팅방",
-    member: [ObjectId(요청.body.당한사람id), 요청.user._id],
-    date: new Date(),
-  };
   db.collection("chatroom")
-    .insertOne(저장할거)
+    .findOne({ member: [ObjectId(요청.body.당한사람id), 요청.user._id] })
     .then((res) => {
-      응답.send("성공");
-    })
-    .catch((err) => {
-      console.log(err);
+      if (res) {
+        응답.status(403).send("이미 존재하는 방입니다.");
+      } else {
+        let 저장할거 = {
+          title: "무슨무슨채팅방",
+          member: [ObjectId(요청.body.당한사람id), 요청.user._id],
+          date: new Date(),
+        };
+        db.collection("chatroom")
+          .insertOne(저장할거)
+          .then((res) => {
+            응답.send("채팅방을 생성하셨습니다!");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     });
 });
 
