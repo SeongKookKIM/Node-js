@@ -24,6 +24,14 @@
     <!-- nav.html 첨부(html 조립식으로 변경) -->
     <%- include('nav.html') %>
 
+    <!-- 서버에서 가져온 리스트(EJS)-반복문 -->
+
+    <!-- <% for (var i = 0; i < posts.length; i ++) { %>
+    <h4>할일 제목: <%= posts[i].제목 %></h4>
+    <p>할일 마감 날짜: <%= posts[i].날짜 %></p>
+    <button>삭제</button>
+    <% } %> -->
+
     <h4 class="ml-2 my-3 text-center">서버에서 가져온 할일 리스트</h4>
 
     <div class="container input-group mb-2">
@@ -62,7 +70,15 @@
           >
             삭제
           </button>
+
           <% } %>
+          <button
+            type="button"
+            class="btn btn-secondary chat"
+            data-id="<%= posts[i].작성자 %>"
+          >
+            채팅
+          </button>
         </li>
         <% } %>
       </ul>
@@ -79,11 +95,28 @@
           data: { _id: 글번호 },
         })
           .done((res) => {
-            console.log("삭제 성공!");
+            console.log(res);
             누른거.parent("li").fadeOut();
           })
           .fail((xhr, textStatus, errorThrown) => {
-            console.log(xhr, textStatus, errorThrown);
+            console.log(errorThrown);
+            window.alert("삭제 권한이 없습니다.");
+          });
+      });
+    </script>
+    <script>
+      $(".chat").click(function (e) {
+        let id = e.target.dataset.id;
+        console.log(id);
+        $.post("/chatroom", {
+          당한사람id: id,
+        })
+          .then((res) => {
+            console.log(res);
+            window.location.href = "/chat";
+          })
+          .catch((err) => {
+            window.alert("이미 존재하는 방입니다.");
           });
       });
     </script>
