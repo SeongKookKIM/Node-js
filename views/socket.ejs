@@ -17,7 +17,11 @@
     <%- include('nav.html') %>
 
     <div>채팅방</div>
+    <input id="input1" />
+    <div id="content"></div>
     <button id="send">서버에 메세지 보내기</button>
+    <button id="room1">채팅방1 입장</button>
+    <button id="room1-send">채팅방1에서 메세지 보내기</button>
 
     <!-- Jquery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -25,8 +29,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.1/socket.io.js"></script>
     <script>
       let socket = io();
+
+      $("#room1").click(function () {
+        socket.emit("joinroom", "채팅방입장시켜줘");
+      });
+
+      $("#room1-send").click(function () {
+        socket.emit("room1-send", $("#input1").val());
+      });
+
       $("#send").click(function () {
-        socket.emit("user-send", "안녕하세요"); // 작명,메시지
+        socket.emit("user-send", $("#input1").val()); // 작명,메시지
+      });
+
+      socket.on("broadcast", function (data) {
+        // console.log(data);
+        $("#content").append(`<div>${data}</div>`);
       });
     </script>
 
