@@ -23,6 +23,11 @@ require("dotenv").config();
 // bcrypt(비밀번호 암호화)
 const bcrypt = require("bcrypt");
 
+// Web Socket.io
+const http = require("http").createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(http);
+
 // MongoDB
 var db;
 const MongoClient = require("mongodb").MongoClient;
@@ -43,7 +48,7 @@ MongoClient.connect(process.env.MONGO, (에러, client) => {
 // ObjectId로 변형시키는거
 const { ObjectId } = require("mongodb");
 
-app.listen(process.env.PORT, function () {
+http.listen(process.env.PORT, function () {
   console.log("listening on 8080");
 });
 
@@ -436,5 +441,18 @@ app.get("/message:id", 로그인했니, (요청, 응답) => {
     // console.log(result.fullDocument);
     응답.write("event: test\n");
     응답.write("data: " + JSON.stringify([result.fullDocument]) + "\n\n");
+  });
+});
+
+// Socket.io
+app.get("/socket", (요청, 응답) => {
+  응답.render("socket.ejs");
+});
+
+io.on("connection", function (socket) {
+  console.log("유저접속됨");
+
+  socket.on("user-send", function (data) {
+    console.log(data);
   });
 });
