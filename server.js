@@ -460,10 +460,11 @@ io.on("connection", function (socket) {
   });
   socket.on("room1-send", function (data) {
     io.to("room1").emit("broadcast", data);
+    console.log(data);
   });
 
   socket.on("user-send", function (data) {
-    // console.log(data);
+    console.log(data);
     // io.to(socket.id).emit("broadcast", data);
     io.emit("broadcast", data);
   });
